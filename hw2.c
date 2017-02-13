@@ -17,14 +17,15 @@
 // --------------------------------------------  	where were these supposed to go? ****************************
 
 // Find the length of a string.
-int myStrLen(char *line){
-	int i = 0;
-	for(i; line[i] != '\0'; ++i);
+static int myStrLen(char *line){
+	int i;
+	for(i = 0; line[i] != '\0'; ++i)
+	  ;
 	return i;
 }
 
 // Compare two strings.
-int myStrCmp(const char* s, const char* t){
+static int myStrCmp(const char* s, const char* t){
 	if(s != '\0' || t != '\0'){	
 		while(s == t && s != '\0'){
 			s++; t++;
@@ -32,6 +33,7 @@ int myStrCmp(const char* s, const char* t){
 		return *s-*t;
 	}else{
 		printf("One or both strings are null.");
+		return 0;
 	}
 }
 
@@ -81,39 +83,40 @@ int main(int argc, char** argv) {
 	char readin[100];
 	int done = FALSE; 
 
+	command_t* cptr;
+	cptr = (command_t*) malloc(sizeof(command_t));
+
+
+
 	while (!done){
 		printf("⌨   "); 
 		fgets(readin, 100, stdin);
 
 		if(myStrLen(readin) != 0 && readin[0] != ' ' && readin[0] != '\n'){
-			command_t* cptr;
-			cptr = (command_t*) malloc(sizeof(command_t));
 			parse(readin, cptr);
 
-			if (myStrCmp(cptr->name, "exit") == 0 || myStrCmp(cptr->name, "quit") == 0){
+			if (myStrCmp(cptr->name, "exit") == 0){
 				printBye();
 				done = TRUE;
-			}else{
-				if(is_builtin(cptr)){ //if the command is builtin, like "cd"
+			}else if(is_builtin(cptr)){ //if the command is builtin, like "cd"
 					int outcome = do_builtin(cptr);
 					if(outcome != SUCCESSFUL)
 						printf("%s: error completing command\n", cptr->name);
-				}
-				else if(find_fullpath("", cptr)){ //not sure what to do with fullpath?**********************
+				
+			}else if(find_fullpath("", cptr)){ //not sure what to do with fullpath?**********************
 										// where does that for loop go? ************
 					//if path has been found and cptr->name has been changed, then just execute!********
 					execute(cptr);
 	
-				}else{
+			}else{
 					//error() ?? what function is this?
 					printf("%s: command not found\n", cptr->name);
-				}
 			}
 
-
-		cleanup(cptr); //is this supposed to be here? ***************not working?**********************
-
+			cleanup(cptr); //is this supposed to be here? ***************not working?**********************
 		}
+
+		
 	}
 	return 0;
 

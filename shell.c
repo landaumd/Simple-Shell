@@ -26,13 +26,13 @@ const char* valid_builtin_commands[] = {"cd", "exit", NULL};
 						// he might run out program with his own main... where to put them? ************
 
 // Count the number of arguments with a passed in delimeter.
-int myStrTok(char* cmd, char d){
+static int myStrTok(char* cmd, char d){
 	int counter = 0;
 	//need to edit so that multiple delimeters in a row don't count
 	while(*cmd != '\0'){
 		if(*cmd == d)
 			counter++;
-		*cmd++;
+		cmd++;
 	}
 	if(d == ' ' || d == ':')//for commands with spaces or : in between = one extra!
 		counter++;
@@ -40,24 +40,25 @@ int myStrTok(char* cmd, char d){
 }
 
 // Count the number of chars in a string.
-int myCountChar(char* str){
+static int myCountChar(char* str){
 	int counter = 0;
 	while(*str != '\0'){
 		counter++;
-		*str++;
+		str++;
 	}
 	return counter;
 }
 
 // Compare two strings.
-int myOtherStrCmp(const char* s, const char* t){
+static int myOtherStrCmp(const char* s, const char* t){
 	if(s != '\0' || t != '\0'){	
 		while(s == t && s != '\0'){
 			s++; t++;
 		}
 		return *s-*t;
 	}else{
-		printf("One or both strings are null.");
+		printf("One or both strings are null.\n");
+		return 0;
 	}
 }
 
@@ -132,16 +133,20 @@ int execute(command_t* p_cmd){
 	pid_t pidn_1;         // pid for child process
 	int status;           // status used in waitpid()
 
-	if ((pidn_1 = fork()) == 0)  // only "child" enters the if statement
+	if ((pidn_1 = fork()) == 0){  // only "child" enters the if statement
 		execv(p_cmd->name, p_cmd->argv);
+		perror("Execute terminated with an error condition!\n"); 
+		exit(1);
+	}
 
 	while (waitpid(pidn_1, &status, 0) > 0) {
 		if (WIFEXITED(status)){	// if child terminated normally
 			//printf("child process terminated normally\n");
 		}else{
 			printf("error: child process did not terminate normally\n");
-		}	
+		}
 	}
+	return WEXITSTATUS(&status);
 }
 
 int find_fullpath(char* fullpath, command_t* p_cmd){//???? what is fullpath supposed to be? ***************************
@@ -226,14 +231,14 @@ int do_builtin(command_t* p_cmd){ //do i need find_fullpath for this??  ********
 
 void cleanup(command_t* p_cmd){ // keeps dying when I try to free things! ***************************************************!!!!!
 
-	free(p_cmd->name);
-	free(p_cmd->argv);
-	free(p_cmd);
+	//free(p_cmd->name);
+	//free(p_cmd->argv);
+	//free(p_cmd);
 	
 	//free(p_cmd->argv[0]); //BREAKS!
-	//for(int i = 0; i < p_cmd->argc; i++){
-	//	free(p_cmd->argv[i]);
-	//}
+	for(int i = 0; i < p_cmd->argc; i++){
+		free(p_cmd->argv[i]);
+	}
 	
 	p_cmd->name = NULL;
 	for(int i = 0; i < p_cmd->argc; i++){
