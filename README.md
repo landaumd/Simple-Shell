@@ -1,8 +1,10 @@
 # Simple Shell
 Build a simple shell for Operating Systems HW2 Assignment.   
-## Objectives  
+   
+## Objectives   
 In this assignment you will develop a simple command line interpreter (or shell) for the Linux kernel using
-the C programming language. This assignment will allow you to gain experience in the following areas:    		 
+the C programming language. This assignment will allow you to gain experience in the following areas:  
+   
 &nbsp;&nbsp;&nbsp;&nbsp;• **More Basic Programming:** This includes variable declaration, data types, arrays, pointers, oper-
 ators, expressions, selection statements, looping statements, functions, structs, and header files.  
 &nbsp;&nbsp;&nbsp;&nbsp;• **System Calls:** Become familiar with system calls that are capable of executing external programs,
@@ -14,6 +16,7 @@ This assignment will use the system and standard library functions listed below.
 with the syntax, and usage of them. Detailed information about each function listed below can be found
 using the man command from the console: i.e. man chdir, will show the man page (short for manual
 page) for the chdir function.  
+   
 &nbsp;&nbsp;&nbsp;&nbsp;• **Change Directory:** int chdir(const char* path)  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Execute External Command:** int execv(const char* file, char* const argv[])  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Get Environmental Variable**: char* getenv(const char* name)  
@@ -22,7 +25,8 @@ page) for the chdir function.
 &nbsp;&nbsp;&nbsp;&nbsp;• **Memory Allocation:** void* malloc(size t size)  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Free Memory:** void free(void* ptr)   
 &nbsp;&nbsp;&nbsp;&nbsp;• **File/Directory Status:** int stat(const char* path, struct stat* buffer)  
-&nbsp;&nbsp;&nbsp;&nbsp;• **Blocking Operation:** pid t wait(int *status)   
+&nbsp;&nbsp;&nbsp;&nbsp;• **Blocking Operation:** pid t wait(int *status)  
+  
 ## Provided Files  
 The three files listed below are provided to you.  
    
