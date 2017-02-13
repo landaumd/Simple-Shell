@@ -21,8 +21,8 @@ page) for the chdir function.
 &nbsp;&nbsp;&nbsp;&nbsp;• **Execute External Command:** int execv(const char* file, char* const argv[])  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Get Environmental Variable**: char* getenv(const char* name)  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Error Mapping:** void perror(const char* string)  
-&nbsp;&nbsp;&nbsp;&nbsp;• **Fork a Process:** pid t fork(void)  
-&nbsp;&nbsp;&nbsp;&nbsp;• **Memory Allocation:** void* malloc(size t size)  
+&nbsp;&nbsp;&nbsp;&nbsp;• **Fork a Process:** pid_t fork(void)  
+&nbsp;&nbsp;&nbsp;&nbsp;• **Memory Allocation:** void* malloc(size t_size)  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Free Memory:** void free(void* ptr)   
 &nbsp;&nbsp;&nbsp;&nbsp;• **File/Directory Status:** int stat(const char* path, struct stat* buffer)  
 &nbsp;&nbsp;&nbsp;&nbsp;• **Blocking Operation:** pid t wait(int *status)  
@@ -41,16 +41,16 @@ assignment.
 The hw2.c, shell.h and shell.c files contain many comments that provide basic definitions and step-by-step
 instructions. Please read the comments carefully and follow the instructions. 
    
-## Todo
+## To Do
 Using the shell.h file, you must provide working implementations within the corresponding shell.c file for
 the following function prototypes:  
     
-&nbsp;&nbsp;&nbsp;&nbsp;1. void parse( char* line, command t* p cmd )  
-&nbsp;&nbsp;&nbsp;&nbsp;2. int execute( command t* p cmd )  
-&nbsp;&nbsp;&nbsp;&nbsp;3. int find_fullpath( char* fullpath, command t* p cmd )  
-&nbsp;&nbsp;&nbsp;&nbsp;4. int is_bultin( command t* p cmd )  
-&nbsp;&nbsp;&nbsp;&nbsp;5. int do_builtin( command t* p cmd )  
-&nbsp;&nbsp;&nbsp;&nbsp;6. void cleanup( command t* p cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;1. void parse( char* line, command_t* p_cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;2. int execute( command_t* p_cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;3. int find_fullpath( char* fullpath, command_t* p_cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;4. int is_bultin( command_t* p_cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;5. int do_builtin( command_t* p_cmd )  
+&nbsp;&nbsp;&nbsp;&nbsp;6. void cleanup( command_t* p_cmd )  
    
 For each function prototype listed above, numerous comments are provided in the header file to guide you
 in this assignment. Please read them carefully, they either provide basic step-by-step instructions, or basic
