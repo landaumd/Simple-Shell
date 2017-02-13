@@ -101,7 +101,10 @@ void parse(char* line, command_t* p_cmd){
 	//printf("p_cmd->argc = %d\n", p_cmd->argc);
 }
 
-// int execute(command_t* p_cmd);
+int execute(command_t* p_cmd){
+
+
+}
 
 int find_fullpath(char* fullpath, command_t* p_cmd){
 	//Confused about this... why do I care if the directory exists? Don't
@@ -145,7 +148,7 @@ int is_builtin(command_t* p_cmd){
 }
 
 int do_builtin(command_t* p_cmd){
-	if(myOtherStrCmp(p_cmd->name, "cd") == 0){
+	if(myOtherStrCmp(p_cmd->name, "cd") == 0){ //is this too specific for cd?
 		if(chdir(p_cmd->argv[1]) == SUCCESSFUL)
 			return SUCCESSFUL;
 		else
