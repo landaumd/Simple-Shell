@@ -103,6 +103,28 @@ void parse(char* line, command_t* p_cmd){
 
 int execute(command_t* p_cmd){
 
+	/*
+	int fnd = FALSE;
+	char* fullpath;
+
+	fnd = find_fullpath(fullpath, p_cmd);
+		
+	if (fnd) {
+		if (fork() == 0) {
+			// This is the child
+			// Execute in same environment as parent
+
+			execv(fullpath, p_cmd->argv);
+			// determine proper arguments...
+			perror("Execute terminated with an error condition!\n");
+			exit(1);
+		}
+		// This is the parent - wait for the child to terminate
+		wait( ... );
+		// waitpid() could be used instead
+	} else {
+		// display to user cmd not found
+	}*/
 
 }
 
@@ -112,7 +134,6 @@ int find_fullpath(char* fullpath, command_t* p_cmd){
 	//Also, why is the fullpath a parameter? Don't I find the full path in here?
 	// Where is the for loop supposed to go? Why is p_cmd a parameter??
 
-	int found = FALSE;
 	struct stat buffer;
 	int exists;
 
@@ -124,17 +145,16 @@ int find_fullpath(char* fullpath, command_t* p_cmd){
 	if (exists == 0 && (S_IFDIR & buffer.st_mode)) {
 		// Directory exists
 		printf("Directory exists\n");
-		found = TRUE;
+		return TRUE;
 	} else if ( exists == 0 && (S_IFREG & buffer.st_mode)) {
 		// File exists
 		printf("File exists\n");
-		found = TRUE;
+		return TRUE;
 	} else {
 		// Not a valid file or directory
-		//printf("Not a valid file or directory\n");
-		found = FALSE;	
+		printf("not a valid file or directory\n");
+		return FALSE;	
 	}	
-	return found;
 }
 
 int is_builtin(command_t* p_cmd){
@@ -147,7 +167,7 @@ int is_builtin(command_t* p_cmd){
 	return FALSE;
 }
 
-int do_builtin(command_t* p_cmd){
+int do_builtin(command_t* p_cmd){ //do i need find_fullpath for this??
 	if(myOtherStrCmp(p_cmd->name, "cd") == 0){ //is this too specific for cd?
 		if(chdir(p_cmd->argv[1]) == SUCCESSFUL)
 			return SUCCESSFUL;
