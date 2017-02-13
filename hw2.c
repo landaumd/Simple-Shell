@@ -14,7 +14,7 @@
 
 // --------------------------------------------
 // My helper functions:
-// --------------------------------------------
+// --------------------------------------------  	where were these supposed to go? ****************************
 
 // Find the length of a string.
 int myStrLen(char *line){
@@ -35,6 +35,20 @@ int myStrCmp(const char* s, const char* t){
 	}
 }
 
+// When user begins shell.
+void printWelcome(){
+	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+	printf("	 MASH (Megan's Awesome Shell) ☺\n");
+	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+}
+
+// When shell is quit / exited.
+void printBye(){
+	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+	printf("		     BYE! ☹\n");
+	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+}
+
 // --------------------------------------------------------
 // Main function:
 // Arguments:	argc = number of arguments suppled by user
@@ -44,7 +58,7 @@ int myStrCmp(const char* s, const char* t){
 int main(int argc, char** argv) {
 
 	// ----------------------------------
-	// Pseudocode
+	// Pseudocode 				*************** I rearranged this *******************************
 	// ----------------------------------
 	// while (!done)
 	//		print the prompt (i.e. >, #, or $ ... your choice)
@@ -56,45 +70,39 @@ int main(int argc, char** argv) {
 		   //<-^if (is _builtin(...))
 	//			do_builtin(...)
 	//		else if (find_fullpath(...))
-	//  			//<-execute(...)
+		//  		<-execute(...)
 	//		else
 	//			error()
-	// 	->cleanup(...)
+//	 	->cleanup(...)
 	//
-
-	printf("CSCI 340 Homework Assignment 2 - Have Fun!\n");
 	
+	printWelcome();	
+
 	char readin[100];
-	int done = FALSE;
+	int done = FALSE; 
 
 	while (!done){
-		printf(">>> ");
+		printf("⌨   "); 
 		fgets(readin, 100, stdin);
 
 		if(myStrLen(readin) != 0 && readin[0] != ' ' && readin[0] != '\n'){
 			command_t* cptr;
 			cptr = (command_t*) malloc(sizeof(command_t));
 			parse(readin, cptr);
-	
-			char* path_env_variable;
-			path_env_variable = getenv("PATH");
-			//printf("PATH = %s\n", path_env_variable);
 
-			if (myStrCmp(cptr->name, "exit") == 0)
+			if (myStrCmp(cptr->name, "exit") == 0 || myStrCmp(cptr->name, "quit") == 0){
+				printBye();
 				done = TRUE;
-			else{
-				if(is_builtin(cptr)){ //if the command is built in, like "cd"
+			}else{
+				if(is_builtin(cptr)){ //if the command is builtin, like "cd"
 					int outcome = do_builtin(cptr);
-					if(outcome == SUCCESSFUL)
-						printf("%s: command completed successfully\n", cptr->name);
-					else
+					if(outcome != SUCCESSFUL)
 						printf("%s: error completing command\n", cptr->name);
 				}
-				else if(find_fullpath("/bin/lsjlk", cptr)){
-				
-					printf("found full path\n");
-
-					//execute
+				else if(find_fullpath("", cptr)){ //not sure what to do with fullpath?**********************
+										// where does that for loop go? ************
+					//if path has been found and cptr->name has been changed, then just execute!********
+					execute(cptr);
 	
 				}else{
 					//error() ?? what function is this?
@@ -103,7 +111,7 @@ int main(int argc, char** argv) {
 			}
 
 
-		cleanup(cptr);
+		cleanup(cptr); //is this supposed to be here? ***************not working?**********************
 
 		}
 	}
