@@ -25,42 +25,29 @@ static int myStrLen(char *line){
 }
 
 // Compare two strings.
-static int myStrCmp(char* s, char* t){
-
-/*	int c = 0;
-	printf("s = '%s' t = '%s'\n", s, t);
-	while(s[c] == t[c]){
-		if(s[c] == '\0' || t[c] == '\0')
-			break;
-		c++;
-	}
-	if(s[c] == '\0' && t[c] == '\0')
-		return 0;
-	else
-		return -1;
-*/
-
-
-	if(s != '\0' || t != '\0'){
-		while(s == t && s != '\0' && t != '\0'){
-			s++; t++;
-		}
-		if( s == '\0')
-			return *s-*t;
-		else{
-			printf("error comparing strings\n");
-			return -1;
-		}
-	}else{
-		printf("one or both strings are null\n");
-		return -1;
-	}
+// Compare two strings.
+int myStrCmp(char* str1, char* str2){
 	
+	//printf("1  str1 = %s	str2 = %s \n", str1, str2);
+
+	int i = 0;
+	while (str1[i] == str2[i] && str1[i] != '\0')
+  		i++;
+	if (str1[i] > str2[i]){
+      		//printf("str1 > str2\n");
+		return 1;
+   	}else if (str1[i] < str2[i]){
+      		//printf("str1 < str2\n");
+		return -1;
+   	}else{
+      		//printf("str1 == str2\n");
+		return 0;
+	}
+
 }
 
 // When user begins shell.
 void printWelcome(){
-	//⚬⚬
 	printf("-----------------------------------------------------------\n");
 	printf("	    MASH (Megan's Awesome Shell) ☺\n");
 	printf("-----------------------------------------------------------\n");
@@ -130,6 +117,13 @@ int main(int argc, char** argv) {
 			}else{
 				printf("%s: command not found\n", cptr->name);
 			}
+
+	
+			for(int i = 0; i < cptr->argc; i++)
+				printf("argv[%d] = '%s'\n", i, cptr->argv[i]);
+	
+			printf("p_cmd->name = %s\n", cptr->name); 
+			printf("p_cmd->argc = %d\n", cptr->argc);
 
 			cleanup(cptr);
 		}

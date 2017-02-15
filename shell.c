@@ -22,8 +22,7 @@ const char* valid_builtin_commands[] = {"cd", "exit", NULL};
 
 // --------------------------------------------
 // My helper functions:
-// -------------------------------------------- ****** i doubled up helper functions because tony mentioned that 
-						// he might run out program with his own main... where to put them? ************
+// -------------------------------------------- 
 
 // Count the number of arguments with a passed in delimeter.
 static int myStrTok(char* cmd, char d){
@@ -50,32 +49,22 @@ static int myCountChar(char* str){
 }
 
 // Compare two strings.
-static int myOtherStrCmp(char* s, char* t){
-	/*int c = 0;
+static int myOtherStrCmp(const char* str1, const char* str2){
 	
-	while(s[c] == t[c]){
-		if(s[c] == '\0' || t[c] == '\0')
-			break;
-		c++;
-	}
-	if(s[c] == '\0' && t[c] == '\0')
-		return 0;
-	else
-		return -1;*/
+	//printf("1  str1 = %s	str2 = %s \n", str1, str2);
 
-	if(s != '\0' || t != '\0'){
-		while(s == t && s != '\0' && t != '\0'){
-			s++; t++;
-		}
-		if( s == '\0')
-			return *s-*t;
-		else{
-			printf("error comparing strings\n");
-			return -1;
-		}
-	}else{
-		printf("one or both strings are null\n");
+	int i = 0;
+	while (str1[i] == str2[i] && str1[i] != '\0')
+  		i++;
+	if (str1[i] > str2[i]){
+      		//printf("str1 > str2\n");
+		return 1;
+   	}else if (str1[i] < str2[i]){
+      		//printf("str1 < str2\n");
 		return -1;
+   	}else{
+      		//printf("str1 == str2\n");
+		return 0;
 	}
 
 }
@@ -111,8 +100,8 @@ void parse(char* line, command_t* p_cmd){
 	}
 
 	//to print argv - array of args
-	for(int i = 0; i < p_cmd->argc; i++)
-		printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
+	//for(int i = 0; i < p_cmd->argc; i++)
+	//	printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
 
 	//argv[0] is the name
 	p_cmd->name = p_cmd->argv[0];
@@ -123,29 +112,6 @@ void parse(char* line, command_t* p_cmd){
 
 int execute(command_t* p_cmd){
 
-	/*int fnd = FALSE;
-	char* fullpath;
-
-	fnd = find_fullpath(fullpath, p_cmd);
-		
-	if (fnd) {
-		if (fork() == 0) {
-			// This is the child
-			// Execute in same environment as parent
-
-			execv(fullpath, p_cmd->argv);
-			// determine proper arguments...
-			perror("Execute terminated with an error condition!\n");
-			exit(1);
-		}
-		// This is the parent - wait for the child to terminate
-		wait( ... );
-		// waitpid() could be used instead
-	} else {
-		// display to user cmd not found
-	}*/
-
-
 	pid_t pidn_1;         // pid for child process
 	int status;           // status used in waitpid()
 
@@ -153,7 +119,7 @@ int execute(command_t* p_cmd){
 	char* fullpath = (char*)malloc(100);
 
 	fnd = find_fullpath(fullpath, p_cmd);
-	printf("%s\n", fullpath);
+	//printf("FULLPATH = %s\n", fullpath);
 		
 	if (fnd) {
 
@@ -197,7 +163,7 @@ int find_fullpath(char* fullpath, command_t* p_cmd){
 				}file_or_dir[counter+1] = '\0';
 
 				savej = j+1; //save place in string +1 to skip the :
-				sprintf(dir_cmd, "%s/%s", file_or_dir, p_cmd->name); //no!
+				sprintf(dir_cmd, "%s/%s", file_or_dir, p_cmd->name); 
 				//printf("dir_cmd = %s\n", dir_cmd);
 
 				exists = stat(dir_cmd, &buffer);
@@ -214,8 +180,11 @@ int find_fullpath(char* fullpath, command_t* p_cmd){
 					
 				} else {
 					// Not a valid file or directory
+					//printf("not a valid file or directory\n");
 					found = FALSE;	
 				}
+
+
 				break;
 			}else
 				counter++;
@@ -234,8 +203,8 @@ int is_builtin(command_t* p_cmd){
 	return FALSE;
 }
 
-int do_builtin(command_t* p_cmd){
-	if(myOtherStrCmp(p_cmd->name, "cd") == 0){
+int do_builtin(command_t* p_cmd){ 
+	if(myOtherStrCmp(p_cmd->name, "cd") == 0){ 
 		if(chdir(p_cmd->argv[1]) == SUCCESSFUL)
 			return SUCCESSFUL;
 		else
@@ -244,25 +213,20 @@ int do_builtin(command_t* p_cmd){
 	return ERROR;
 }
 
-void cleanup(command_t* p_cmd){ // keeps dying when I try to free things! ***************************************************!!!!!
+void cleanup(command_t* p_cmd){ 
 
-	//free(p_cmd->name);
-	//free(p_cmd->argv);
-	//free(p_cmd);
-	
-	//free(p_cmd->argv[0]); //BREAKS!
+	//free(p_cmd->name); - same as argv[0]
+
 	for(int i = 0; i < p_cmd->argc; i++){
 		free(p_cmd->argv[i]);
 	}
 	free(p_cmd->argv);
-
 	
-	/*p_cmd->name = NULL;
+	p_cmd->name = NULL;
 	for(int i = 0; i < p_cmd->argc; i++){
 		p_cmd->argv[i] = NULL;
 	}
 	p_cmd->argv = NULL;
 	p_cmd->argc = 0;
-	p_cmd = NULL;*/
+	p_cmd = NULL;
 }
-
