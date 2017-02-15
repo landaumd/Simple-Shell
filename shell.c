@@ -50,16 +50,34 @@ static int myCountChar(char* str){
 }
 
 // Compare two strings.
-static int myOtherStrCmp(const char* s, const char* t){
-	if(s != '\0' || t != '\0'){	
-		while(s == t && s != '\0'){
+static int myOtherStrCmp(char* s, char* t){
+	/*int c = 0;
+	
+	while(s[c] == t[c]){
+		if(s[c] == '\0' || t[c] == '\0')
+			break;
+		c++;
+	}
+	if(s[c] == '\0' && t[c] == '\0')
+		return 0;
+	else
+		return -1;*/
+
+	if(s != '\0' || t != '\0'){
+		while(s == t && s != '\0' && t != '\0'){
 			s++; t++;
 		}
-		return *s-*t;
+		if( s == '\0')
+			return *s-*t;
+		else{
+			printf("error comparing strings\n");
+			return -1;
+		}
 	}else{
-		printf("One or both strings are null.\n");
-		return 0;
+		printf("one or both strings are null\n");
+		return -1;
 	}
+
 }
 
 // --------------------------------------------
@@ -93,8 +111,8 @@ void parse(char* line, command_t* p_cmd){
 	}
 
 	//to print argv - array of args
-	//for(int i = 0; i < p_cmd->argc; i++)
-	//	printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
+	for(int i = 0; i < p_cmd->argc; i++)
+		printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
 
 	//argv[0] is the name
 	p_cmd->name = p_cmd->argv[0];
@@ -128,34 +146,35 @@ int execute(command_t* p_cmd){
 	}*/
 
 
-	//is it okay to do it this way instead of ^ that way ***********************************************************
-
 	pid_t pidn_1;         // pid for child process
 	int status;           // status used in waitpid()
 
-	if ((pidn_1 = fork()) == 0){  // only "child" enters the if statement
-		execv(p_cmd->name, p_cmd->argv);
-		perror("Execute terminated with an error condition!\n"); 
-		exit(1);
-	}
+	int fnd = FALSE;
+	char* fullpath = (char*)malloc(100);
 
-	while (waitpid(pidn_1, &status, 0) > 0) {
-		if (WIFEXITED(status)){	// if child terminated normally
-			//printf("child process terminated normally\n");
-		}else{
-			printf("error: child process did not terminate normally\n");
+	fnd = find_fullpath(fullpath, p_cmd);
+	printf("%s\n", fullpath);
+		
+	if (fnd) {
+
+		if ((pidn_1 = fork()) == 0){  // only "child" enters the if statement
+			execv(fullpath, p_cmd->argv);
+			perror("Execute terminated with an error condition: "); 
+			exit(1);
+		}
+
+		while (waitpid(pidn_1, &status, 0) > 0) {
+			if (WIFEXITED(status)){	// if child terminated normally
+				//printf("child process terminated normally\n");
+			}else{
+				printf("error: child process did not terminate normally\n");
+			}
 		}
 	}
 	return WEXITSTATUS(&status);
 }
 
-int find_fullpath(char* fullpath, command_t* p_cmd){//???? what is fullpath supposed to be? ***************************
-							//i do not pass in a proper fullpath from the main....********
-
-	//Confused about this... why do I care if the directory exists? Don't
-	// I just want to know if the file exists so I can execute it? 
-	//Also, why is the fullpath a parameter? Don't I find the full path in here?
-	// Where is the for loop supposed to go that loops through the PATH? Why is p_cmd a parameter??
+int find_fullpath(char* fullpath, command_t* p_cmd){
 
 	int found = FALSE;
 
@@ -178,29 +197,25 @@ int find_fullpath(char* fullpath, command_t* p_cmd){//???? what is fullpath supp
 				}file_or_dir[counter+1] = '\0';
 
 				savej = j+1; //save place in string +1 to skip the :
-				sprintf(dir_cmd, "%s/%s", file_or_dir, p_cmd->name); //are we allowed to use sprintf()? *****
-				//printf("%s\n", dir_cmd);
+				sprintf(dir_cmd, "%s/%s", file_or_dir, p_cmd->name); //no!
+				//printf("dir_cmd = %s\n", dir_cmd);
 
 				exists = stat(dir_cmd, &buffer);
-				if (exists == 0 && (S_IFDIR & buffer.st_mode)) {
-					// Directory exists - 				don't know why we need this? *******
-					//printf("Directory exists\n");
-					found = TRUE;
-				} else if ( exists == 0 && (S_IFREG & buffer.st_mode)) {
+				if ( exists == 0 && (S_IFREG & buffer.st_mode)) {
 					// File exists
-					//printf("File exists\n");
-
-					p_cmd->name = dir_cmd; //change p_cmd's name to the fullpath name? *****************
-				
+					//printf("file exists!\n");
+					int l = myCountChar(dir_cmd);
+					for(int x=0; x<l; x++){	
+						fullpath[x] = dir_cmd[x];
+					}fullpath[l+1] = '\0';
+					//printf("dir_cmd = %s\n", dir_cmd);
+					//printf("fullpath = %s\n", fullpath);
 					return TRUE;
 					
 				} else {
 					// Not a valid file or directory
-					//printf("not a valid file or directory\n");
 					found = FALSE;	
 				}
-
-
 				break;
 			}else
 				counter++;
@@ -219,8 +234,8 @@ int is_builtin(command_t* p_cmd){
 	return FALSE;
 }
 
-int do_builtin(command_t* p_cmd){ //do i need find_fullpath for this??  ***********************************
-	if(myOtherStrCmp(p_cmd->name, "cd") == 0){ //is this too specific for cd? *************************
+int do_builtin(command_t* p_cmd){
+	if(myOtherStrCmp(p_cmd->name, "cd") == 0){
 		if(chdir(p_cmd->argv[1]) == SUCCESSFUL)
 			return SUCCESSFUL;
 		else
@@ -239,13 +254,15 @@ void cleanup(command_t* p_cmd){ // keeps dying when I try to free things! ******
 	for(int i = 0; i < p_cmd->argc; i++){
 		free(p_cmd->argv[i]);
 	}
+	free(p_cmd->argv);
+
 	
-	p_cmd->name = NULL;
+	/*p_cmd->name = NULL;
 	for(int i = 0; i < p_cmd->argc; i++){
 		p_cmd->argv[i] = NULL;
 	}
 	p_cmd->argv = NULL;
 	p_cmd->argc = 0;
-	p_cmd = NULL;
+	p_cmd = NULL;*/
 }
 

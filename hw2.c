@@ -14,7 +14,7 @@
 
 // --------------------------------------------
 // My helper functions:
-// --------------------------------------------  	where were these supposed to go? ****************************
+// --------------------------------------------
 
 // Find the length of a string.
 static int myStrLen(char *line){
@@ -25,30 +25,52 @@ static int myStrLen(char *line){
 }
 
 // Compare two strings.
-static int myStrCmp(const char* s, const char* t){
-	if(s != '\0' || t != '\0'){	
-		while(s == t && s != '\0'){
+static int myStrCmp(char* s, char* t){
+
+/*	int c = 0;
+	printf("s = '%s' t = '%s'\n", s, t);
+	while(s[c] == t[c]){
+		if(s[c] == '\0' || t[c] == '\0')
+			break;
+		c++;
+	}
+	if(s[c] == '\0' && t[c] == '\0')
+		return 0;
+	else
+		return -1;
+*/
+
+
+	if(s != '\0' || t != '\0'){
+		while(s == t && s != '\0' && t != '\0'){
 			s++; t++;
 		}
-		return *s-*t;
+		if( s == '\0')
+			return *s-*t;
+		else{
+			printf("error comparing strings\n");
+			return -1;
+		}
 	}else{
-		printf("One or both strings are null.");
-		return 0;
+		printf("one or both strings are null\n");
+		return -1;
 	}
+	
 }
 
 // When user begins shell.
 void printWelcome(){
-	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
-	printf("	 MASH (Megan's Awesome Shell) ☺\n");
-	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+	//⚬⚬
+	printf("-----------------------------------------------------------\n");
+	printf("	    MASH (Megan's Awesome Shell) ☺\n");
+	printf("-----------------------------------------------------------\n");
 }
 
 // When shell is quit / exited.
 void printBye(){
-	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
-	printf("		     BYE! ☹\n");
-	printf("⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬\n");
+	printf("-----------------------------------------------------------\n");
+	printf("		         BYE! ☹\n");
+	printf("-----------------------------------------------------------\n");
 }
 
 // --------------------------------------------------------
@@ -68,14 +90,13 @@ int main(int argc, char** argv) {
 	//		parse the command line
         //      if (parsed command is "exit")
         //      	done = true
-	//  	else 
-		   //<-^if (is _builtin(...))
-	//			do_builtin(...)
-	//		else if (find_fullpath(...))
-		//  		<-execute(...)
-	//		else
-	//			error()
-//	 	->cleanup(...)
+	//  	else if (is _builtin(...))
+	//		do_builtin(...)
+	//	else if (find_fullpath(...))
+	//  		execute(...)
+	//	else
+	//		error()
+	//	cleanup(...)
 	//
 	
 	printWelcome();	
@@ -85,7 +106,7 @@ int main(int argc, char** argv) {
 
 	command_t* cptr;
 	cptr = (command_t*) malloc(sizeof(command_t));
-
+	char* fullpath = malloc(100);
 
 
 	while (!done){
@@ -99,25 +120,23 @@ int main(int argc, char** argv) {
 				printBye();
 				done = TRUE;
 			}else if(is_builtin(cptr)){ //if the command is builtin, like "cd"
-					int outcome = do_builtin(cptr);
-					if(outcome != SUCCESSFUL)
-						printf("%s: error completing command\n", cptr->name);
+				int outcome = do_builtin(cptr);
+				if(outcome != SUCCESSFUL)
+					printf("%s: error completing command\n", cptr->name);
 				
-			}else if(find_fullpath("", cptr)){ //not sure what to do with fullpath?**********************
-										// where does that for loop go? ************
-					//if path has been found and cptr->name has been changed, then just execute!********
-					execute(cptr);
-	
+			}else if(find_fullpath(fullpath, cptr)){ 
+				execute(cptr);
+
 			}else{
-					//error() ?? what function is this?
-					printf("%s: command not found\n", cptr->name);
+				printf("%s: command not found\n", cptr->name);
 			}
 
-			cleanup(cptr); //is this supposed to be here? ***************not working?**********************
+			cleanup(cptr);
 		}
 
 		
 	}
+	free(cptr);
 	return 0;
 
 } // end main function
