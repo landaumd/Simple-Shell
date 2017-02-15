@@ -119,16 +119,14 @@ int main(int argc, char** argv) {
 			}
 
 	
-			for(int i = 0; i < cptr->argc; i++)
-				printf("argv[%d] = '%s'\n", i, cptr->argv[i]);
+			//for(int i = 0; i < cptr->argc; i++)
+				//printf("argv[%d] = '%s'\n", i, cptr->argv[i]);
 	
-			printf("p_cmd->name = %s\n", cptr->name); 
-			printf("p_cmd->argc = %d\n", cptr->argc);
+			//printf("p_cmd->name = %s\n", cptr->name); 
+			//printf("p_cmd->argc = %d\n", cptr->argc);
 
 			cleanup(cptr);
 		}
-
-		
 	}
 	free(cptr);
 	return 0;

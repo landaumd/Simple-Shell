@@ -87,7 +87,7 @@ void parse(char* line, command_t* p_cmd){
 		int counter = 0; //count num letters in each argument so we can malloc properly
 		for(int j = savej; j < myCountChar(line); j++){ //loop through whole str,
 			if(line[j] == ' ' || line[j+1] == '\0'){
-				p_cmd->argv[i] = (char*)malloc(counter+1);//add an extra for the '\0' char
+				p_cmd->argv[i] = (char* const)malloc(counter+1);//add an extra for the '\0' char
 				for(int k = 0; k < counter; k++){ //save all chars into argv[i]				
 					p_cmd->argv[i][k] = line[savej];
 					savej++;
@@ -99,15 +99,17 @@ void parse(char* line, command_t* p_cmd){
 		}
 	}
 
-	//to print argv - array of args
-	//for(int i = 0; i < p_cmd->argc; i++)
-	//	printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
-
 	//argv[0] is the name
 	p_cmd->name = p_cmd->argv[0];
+
+	/*FOR PRINTING OUT EVERYTHING:
+
+	//to print argv - array of args
+	for(int i = 0; i < p_cmd->argc; i++)
+		printf("argv[%d] = '%s'\n", i, p_cmd->argv[i]);
 	
-	//printf("p_cmd->name = %s\n", p_cmd->name); 
-	//printf("p_cmd->argc = %d\n", p_cmd->argc);
+	printf("p_cmd->name = %s\n", p_cmd->name); 
+	printf("p_cmd->argc = %d\n", p_cmd->argc);*/
 }
 
 int execute(command_t* p_cmd){
@@ -120,12 +122,12 @@ int execute(command_t* p_cmd){
 
 	fnd = find_fullpath(fullpath, p_cmd);
 	//printf("FULLPATH = %s\n", fullpath);
-		
+
 	if (fnd) {
 
 		if ((pidn_1 = fork()) == 0){  // only "child" enters the if statement
 			execv(fullpath, p_cmd->argv);
-			perror("Execute terminated with an error condition: "); 
+			perror("Execute terminated with an error condition: ");  //why bad address???
 			exit(1);
 		}
 
@@ -215,7 +217,7 @@ int do_builtin(command_t* p_cmd){
 
 void cleanup(command_t* p_cmd){ 
 
-	//free(p_cmd->name); - same as argv[0]
+	//free(p_cmd->name) - same as freeing argv[0]
 
 	for(int i = 0; i < p_cmd->argc; i++){
 		free(p_cmd->argv[i]);
