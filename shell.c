@@ -79,7 +79,8 @@ void parse(char* line, command_t* p_cmd){
 	//printf("p_cmd->argc = %d\n", p_cmd->argc);
 
 	//malloc enough space for num of arg strings
-	p_cmd->argv = (char**)malloc((p_cmd->argc)*sizeof(char*));
+	p_cmd->argv = (char**)malloc((p_cmd->argc+1)*sizeof(char*));
+        p_cmd->argv[p_cmd->argc] = NULL;
 
 	//make array out of all arguments
 	int savej = 0;
@@ -117,11 +118,18 @@ int execute(command_t* p_cmd){
 	pid_t pidn_1;         // pid for child process
 	int status;           // status used in waitpid()
 
+        int i;
 	int fnd = FALSE;
 	char* fullpath = (char*)malloc(100);
 
 	fnd = find_fullpath(fullpath, p_cmd);
-	//printf("FULLPATH = %s\n", fullpath);
+	printf("FULLPATH = %s\n", fullpath);
+ 
+        i = 0;
+        while (p_cmd->argv[i] != NULL) {
+           printf("argv[%d] = %s\n", i, p_cmd->argv[i]);
+           i++;
+        }
 
 	if (fnd) {
 
